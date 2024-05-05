@@ -1,0 +1,105 @@
+<%- include('partials/header'); -%>
+
+<% 
+let dones = []
+for(let i=0; i<posts.length ; i++) {
+    if(posts[i].checked)
+        //console.log(posts[i])
+        dones.push(posts.splice(i,i+1)[0])
+}
+posts = posts.concat(dones)
+%>
+
+<div class="d-flex flex-wrap  justify-content-center align-items-center ">
+
+<div class="bg-light bg-gradient shadow rounded p-3 d-flex flex-column justify-content-center align-items-center todo-container">
+    <div class="d-flex ">
+        <h5 id="todo-len" class="px-2"><span class="badge text-bg-primary  shadow-sm"><%= posts.length %></span></h5>
+        <h1 class="text-secondary-emphasis">Todo List&#10071; </h1>
+    </div>
+    
+    <div class="d-flex">
+        <button class="p-3 " alt="New Todo" data-bs-toggle="collapse" data-bs-target="#new-todo">
+            <i class="bi bi-clipboard-plus h1"></i>
+        </button>
+    </div>
+    
+
+    <div class="flex flex-col justify-content-start align-items-center text-secondary-emphasis w-100">
+        <% posts.map((post, index) => { %>
+            
+            <div class="bg-primary-subtle px-2 py-1 m-2 rounded shadow todo-item">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex <%= post.checked ? "text-secondary" : "" %>">
+                        <i onclick="toggleCheck(this, <%= post.checked %>, '<%= post.id %>')" 
+                            class="bi bi-<%= post.checked ? "check-" : "" %>square  px-2"></i>
+                            
+                        <h5 style="text-decoration: <%= post.checked ? "line-through" : "none" %>;" 
+                            class="px-1">
+                            <%= post.title %>
+                        </h5>
+                    </div>
+                    
+                    <button data-bs-toggle="collapse" data-bs-target="#c<%= index %>" onclick="invertShown( <%= index %>, '<%= post.id %>' )">
+                        <i id="v<%= index %>" class="bi bi-caret-down-fill h5 "></i>
+                    </button>
+                </div>
+
+                
+                
+                <div id="c<%= index %>" class="collapse py-1 ">
+                    <p class="<%= post.checked ? "text-secondary" : "" %>" ><%= post.desc %></p>
+                    
+                    <form method="post" action="posts/delete/<%= post.id %>" class="d-flex justify-content-between">
+                        <div class="taglist">
+                            <% post.tags.map((tag) => { %>
+                                <small class="badge text-bg-secondary" style="margin-right: 1px; margin-bottom: 2px;"><%= tag %></small>
+                            <% }); %>
+                        </div>
+                        <button type="submit">
+                            <div class="delete-todo rounded p-1">
+                                <i class="bi bi-trash-fill h4"></i>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
+
+<div id="new-todo" class="new-todo-container collapse bg-light bg-gradient shadow rounded p-3 mb-5 ">
+    <form method="post" action="/compose" class="d-flex flex-column gap-2 align-items-center ">
+        <h1>New Todo</h1>
+        <div class="row">
+            <div >
+              <div class="form-floating">
+                <input name="title" type="text" class="form-control" placeholder="Title">
+                <label for="title">Title</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <div class="form-floating">
+                <textarea name="desc" class="form-control" placeholder="Insert your description here"
+                  style="height: 100px; width: 220px;"></textarea>
+                <label for="desc">Description</label>
+              </div>
+            </div>
+          </div>
+        <div class="row">
+            <div >
+              <div class="form-floating">
+                <input name="tags" type="text" class="form-control" placeholder="Comma-separated tags">
+                <label for="tags">Tags (comma-separated)</label>
+              </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+
+</div>
+
+<%- include('partials/footer'); -%>
